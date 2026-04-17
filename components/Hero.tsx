@@ -163,7 +163,7 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 2.2, duration: 1 }}
       >
-        "Vạn lý tu tiên lộ, nhất bộ nhất cước ấn"
+        &ldquo;Vạn lý tu tiên lộ, nhất bộ nhất cước ấn&rdquo;
       </motion.p>
 
       {/* Scroll indicator */}

@@ -65,7 +65,7 @@ function useLocalStorage<T>(key: string, init: T) {
   const set = useCallback((v: T) => {
     setVal(v);
     if (typeof window !== "undefined") localStorage.setItem(key, JSON.stringify(v));
-  }, []);
+  }, [key]);
   return [val, set] as const;
 }
 

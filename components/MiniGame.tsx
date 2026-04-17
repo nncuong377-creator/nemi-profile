@@ -83,6 +83,9 @@ export default function MiniGame() {
   const ptIdRef = useRef(0);
   const surgeActiveRef = useRef(false);
 
+  const catchCountRef = useRef(0);
+  const [showJumpscare, setShowJumpscare] = useState(false);
+
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
   const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
@@ -279,6 +282,7 @@ export default function MiniGame() {
     floatingTextsRef.current = [];
     scoreRef.current = 0;
     comboRef.current = 0;
+    catchCountRef.current = 0;
     lastElemRef.current = "";
     surgeActiveRef.current = false;
     setScore(0);
@@ -369,6 +373,33 @@ export default function MiniGame() {
           ? `+${pts} x${(multiplier).toFixed(1)}🔥`
           : `+${pts}`;
         addFloatingText(orb.x, orb.y - orb.radius, label, orb.element.color);
+
+        catchCountRef.current += 1;
+        if (catchCountRef.current === 7) {
+          setShowJumpscare(true);
+          try {
+            const ac = new AudioContext();
+            const buf = ac.createBuffer(1, ac.sampleRate * 0.4, ac.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let j = 0; j < data.length; j++) data[j] = (Math.random() * 2 - 1) * (1 - j / data.length);
+            const src = ac.createBufferSource();
+            src.buffer = buf;
+            const g = ac.createGain();
+            g.gain.value = 1.0;
+            src.connect(g); g.connect(ac.destination);
+            src.start();
+            const osc = ac.createOscillator();
+            const og = ac.createGain();
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(900, ac.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(150, ac.currentTime + 0.5);
+            og.gain.setValueAtTime(0.6, ac.currentTime);
+            og.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.6);
+            osc.connect(og); og.connect(ac.destination);
+            osc.start(); osc.stop(ac.currentTime + 0.6);
+          } catch { /* ignore */ }
+          setTimeout(() => setShowJumpscare(false), 1800);
+        }
 
         return false;
       }
@@ -501,6 +532,68 @@ export default function MiniGame() {
                       ⚡ PHÁ CẢNH! ⚡
                     </p>
                     <p className="text-xl font-bold mt-1" style={{ color: realmColor }}>{realmName}</p>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* ─── JUMPSCARE ─── */}
+            <AnimatePresence>
+              {showJumpscare && (
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center z-50 overflow-hidden"
+                  style={{ background: "rgba(0,0,0,0.92)" }}
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  transition={{ duration: 0.05 }}>
+                  <motion.div
+                    initial={{ scale: 0.05, rotate: -15 }}
+                    animate={{ scale: 1.15, rotate: 5 }}
+                    exit={{ scale: 2, opacity: 0 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}>
+                    <svg width="320" height="320" viewBox="0 0 320 320" fill="none">
+                      {/* Red glow bg */}
+                      <circle cx="160" cy="160" r="155" fill="#1A0000" />
+                      <circle cx="160" cy="160" r="155" fill="none" stroke="#CC0000" strokeWidth="4" opacity="0.8" />
+                      {/* Forehead veins */}
+                      <path d="M120 60 Q130 40 145 55 Q140 45 155 50" stroke="#8B0000" strokeWidth="2" opacity="0.6" fill="none" />
+                      <path d="M185 58 Q195 38 205 52 Q198 44 210 48" stroke="#8B0000" strokeWidth="2" opacity="0.6" fill="none" />
+                      {/* Left eye */}
+                      <ellipse cx="110" cy="130" rx="48" ry="52" fill="white" />
+                      <circle  cx="110" cy="135" r="36" fill="#CC0000" opacity="0.4" />
+                      <circle  cx="110" cy="135" r="32" fill="#111" />
+                      <circle  cx="110" cy="135" r="18" fill="#CC0000" opacity="0.7" />
+                      <circle  cx="96"  cy="120" r="7"  fill="white" />
+                      {/* Right eye */}
+                      <ellipse cx="210" cy="130" rx="48" ry="52" fill="white" />
+                      <circle  cx="210" cy="135" r="36" fill="#CC0000" opacity="0.4" />
+                      <circle  cx="210" cy="135" r="32" fill="#111" />
+                      <circle  cx="210" cy="135" r="18" fill="#CC0000" opacity="0.7" />
+                      <circle  cx="196" cy="120" r="7"  fill="white" />
+                      {/* Eye veins */}
+                      <path d="M68 118 Q88 128 95 130"  stroke="#CC0000" strokeWidth="1.5" opacity="0.7" fill="none" />
+                      <path d="M72 140 Q92 138 97 136"  stroke="#CC0000" strokeWidth="1.5" opacity="0.6" fill="none" />
+                      <path d="M252 118 Q232 128 225 130" stroke="#CC0000" strokeWidth="1.5" opacity="0.7" fill="none" />
+                      {/* Angry brows */}
+                      <path d="M65 88 Q110 68 148 96"  stroke="#111" strokeWidth="10" strokeLinecap="round" fill="none" />
+                      <path d="M172 96 Q210 68 255 88" stroke="#111" strokeWidth="10" strokeLinecap="round" fill="none" />
+                      {/* Nose */}
+                      <path d="M148 175 Q160 185 172 175 Q165 195 160 192 Q155 195 148 175Z" fill="#5A1A1A" />
+                      {/* Wide open mouth */}
+                      <path d="M72 222 Q160 310 248 222" fill="#0A0000" />
+                      <path d="M72 222 Q160 320 248 222 Q160 295 72 222Z" fill="#8B0000" />
+                      {/* Upper teeth */}
+                      <path d="M86 225 L96 268 L112 228"  fill="ivory" />
+                      <path d="M112 228 L122 275 L140 232" fill="ivory" />
+                      <path d="M140 232 L148 280 L160 234" fill="ivory" />
+                      <path d="M160 234 L172 280 L180 232" fill="ivory" />
+                      <path d="M180 232 L198 275 L208 228" fill="ivory" />
+                      <path d="M208 228 L224 268 L234 225" fill="ivory" />
+                      {/* Blood drips */}
+                      <path d="M100 268 Q102 285 100 292" stroke="#CC0000" strokeWidth="3" strokeLinecap="round" fill="none" />
+                      <path d="M160 280 Q162 298 158 306" stroke="#CC0000" strokeWidth="3" strokeLinecap="round" fill="none" />
+                      {/* BOO text */}
+                      <text x="132" y="318" fontSize="28" fontWeight="900" fill="#FF0000" fontFamily="serif" letterSpacing="8">BOO!</text>
+                    </svg>
                   </motion.div>
                 </motion.div>
               )}

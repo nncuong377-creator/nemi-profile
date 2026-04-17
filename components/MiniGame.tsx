@@ -197,7 +197,7 @@ export default function MiniGame() {
       clearInterval(timerInterval);
       cancelAnimationFrame(animFrameRef.current);
     };
-  }, [gameState, spawnStar, gameLoop, setHighScore]);
+  }, [gameState, spawnStar, gameLoop, setHighScore, highScore]);
 
   const handleCanvasClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {

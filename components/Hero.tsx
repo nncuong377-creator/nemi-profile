@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 const ROLES = [
   "Thành viên NEMI",
   "Creative Designer",
@@ -73,10 +74,11 @@ export default function Hero() {
         <div className="avatar-border p-[3px] rounded-full w-36 h-36 md:w-44 md:h-44 animate-glow-pulse">
           <div className="w-full h-full rounded-full overflow-hidden bg-dark-card relative group">
             {/* Thay /avatar.svg bằng /avatar.jpg khi bạn có ảnh thật */}
-            <img
+            <Image
               src="/avatar.svg"
               alt="Avatar"
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
             />
           </div>
         </div>

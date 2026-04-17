@@ -330,15 +330,15 @@ export default function MiniGame() {
     };
   }, [gameState, spawnOrb, gameLoop, setHighScore, highScore]);
 
-  const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  const processHit = useCallback((clientX: number, clientY: number, hitMult = 1.6) => {
     if (gameState !== "playing") return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const sx = canvas.width / rect.width;
     const sy = canvas.height / rect.height;
-    const mx = (e.clientX - rect.left) * sx;
-    const my = (e.clientY - rect.top) * sy;
+    const mx = (clientX - rect.left) * sx;
+    const my = (clientY - rect.top) * sy;
 
     const now = Date.now();
     let caught = false;
@@ -346,7 +346,7 @@ export default function MiniGame() {
     orbsRef.current = orbsRef.current.filter((orb) => {
       if (caught) return true;
       const dist = Math.hypot(mx - orb.x, my - orb.y);
-      if (dist < orb.radius * 1.6) {
+      if (dist < orb.radius * hitMult) {
         caught = true;
         // Combo
         const sameElem = orb.element.name === lastElemRef.current;
@@ -407,6 +407,23 @@ export default function MiniGame() {
     });
   }, [gameState, spawnParticles, addFloatingText, updateRealm]);
 
+  const handleClick = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    processHit(e.clientX, e.clientY, 1.6);
+  }, [processHit]);
+
+  // Non-passive touch listener — must be attached via useEffect
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const onTouch = (e: TouchEvent) => {
+      e.preventDefault(); // chặn scroll khi đang chơi
+      const touch = e.changedTouches[0];
+      if (touch) processHit(touch.clientX, touch.clientY, 2.6); // vùng tap rộng hơn
+    };
+    canvas.addEventListener("touchstart", onTouch, { passive: false });
+    return () => canvas.removeEventListener("touchstart", onTouch);
+  }, [processHit]);
+
   const getCurrentRealm = () => REALMS.filter((r) => scoreRef.current >= r.threshold).pop() ?? REALMS[0];
   const getNextRealm = () => {
     const idx = REALMS.findIndex((r) => r === getCurrentRealm());
@@ -420,7 +437,7 @@ export default function MiniGame() {
   };
 
   return (
-    <section className="section relative z-10 px-6" aria-label="Mini game Tu Tiên">
+    <section className="section relative z-10 px-3 sm:px-6" aria-label="Mini game Tu Tiên">
       <div className="max-w-2xl mx-auto">
         <motion.div className="text-center mb-10"
           initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
@@ -430,32 +447,32 @@ export default function MiniGame() {
             Hấp Thụ Linh Khí
           </h2>
           <p className="text-white/30 text-sm mt-2">
-            Click vào các linh cầu — duy trì combo để nhân điểm lên tới x6
+            Chạm/Click vào linh cầu — combo cùng nguyên tố để nhân điểm x6
           </p>
         </motion.div>
 
-        <motion.div className="glass rounded-3xl p-4 md:p-6 overflow-hidden"
+        <motion.div className="glass rounded-3xl p-3 sm:p-4 md:p-6 overflow-hidden"
           initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }} transition={{ duration: 0.7 }}>
 
           {/* HUD trên */}
-          <div className="flex items-center justify-between mb-3 px-1">
-            <div className="text-center min-w-[70px]">
-              <p className="text-white/30 text-[10px] uppercase tracking-wider">Linh Lực</p>
-              <motion.p className="text-jade font-bold text-2xl"
+          <div className="flex items-center justify-between mb-3 px-1 gap-2">
+            <div className="text-center min-w-[52px]">
+              <p className="text-white/30 text-[9px] uppercase tracking-wider">Linh Lực</p>
+              <motion.p className="text-jade font-bold text-lg sm:text-2xl leading-tight"
                 key={score} initial={{ scale: 1.3 }} animate={{ scale: 1 }}>
                 {score}
               </motion.p>
             </div>
 
             {/* Cảnh giới + thanh tiến trình */}
-            <div className="flex-1 mx-4">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-semibold" style={{ color: realmColor }}>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-1 gap-1">
+                <span className="text-[10px] sm:text-[11px] font-semibold truncate" style={{ color: realmColor }}>
                   {realmName}
                 </span>
                 {getNextRealm() && (
-                  <span className="text-white/25 text-[10px]">{getNextRealm()?.name} →</span>
+                  <span className="text-white/20 text-[9px] hidden sm:inline flex-shrink-0">{getNextRealm()?.name} →</span>
                 )}
               </div>
               <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
@@ -468,9 +485,9 @@ export default function MiniGame() {
               </div>
             </div>
 
-            <div className="text-center min-w-[70px]">
-              <p className="text-white/30 text-[10px] uppercase tracking-wider">Thời Gian</p>
-              <p className={`font-bold text-2xl ${timeLeft <= 8 ? "text-red-400 animate-pulse" : "text-white"}`}>
+            <div className="text-center min-w-[48px]">
+              <p className="text-white/30 text-[9px] uppercase tracking-wider">Thời Gian</p>
+              <p className={`font-bold text-lg sm:text-2xl leading-tight ${timeLeft <= 8 ? "text-red-400 animate-pulse" : "text-white"}`}>
                 {timeLeft}s
               </p>
             </div>
@@ -514,7 +531,7 @@ export default function MiniGame() {
               className="game-canvas w-full h-full cursor-crosshair"
               style={{ background: "radial-gradient(ellipse at center, #0D1220 0%, #050810 100%)" }}
               onClick={handleClick}
-              aria-label="Game canvas — Click để hấp thụ linh cầu"
+              aria-label="Game canvas — Chạm/Click để hấp thụ linh cầu"
             />
 
             {/* Breakthrough flash */}

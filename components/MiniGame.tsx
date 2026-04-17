@@ -523,12 +523,12 @@ export default function MiniGame() {
           </div>
 
           {/* Canvas */}
-          <div className="relative rounded-2xl overflow-hidden" style={{ aspectRatio: "4/3" }}>
+          <div className="relative rounded-2xl overflow-hidden w-full" style={{ paddingBottom: "75%" }}>
             <canvas
               ref={canvasRef}
               width={600}
               height={450}
-              className="game-canvas w-full h-full cursor-crosshair"
+              className="game-canvas absolute inset-0 w-full h-full cursor-crosshair"
               style={{ background: "radial-gradient(ellipse at center, #0D1220 0%, #050810 100%)" }}
               onClick={handleClick}
               aria-label="Game canvas — Chạm/Click để hấp thụ linh cầu"

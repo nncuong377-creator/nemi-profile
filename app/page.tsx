@@ -8,6 +8,7 @@ import MessageForm from "@/components/MessageForm";
 import MiniGame from "@/components/MiniGame";
 
 const ParticleBackground = dynamic(() => import("@/components/ParticleBackground"), { ssr: false });
+const MagicalEffects = dynamic(() => import("@/components/MagicalEffects"), { ssr: false });
 
 const Divider = () => (
   <div className="max-w-4xl mx-auto px-6">
@@ -19,6 +20,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen" role="main">
       <ParticleBackground />
+      <MagicalEffects />
 
       <div className="fixed inset-0 pointer-events-none z-[1]"
         style={{ background: "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,200,150,0.05) 0%, transparent 60%)" }}

@@ -62,7 +62,7 @@ export default function Hero() {
 
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 z-10"
+      className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 sm:px-6 z-10"
       aria-label="Phần giới thiệu"
     >
       {/* Hào quang nền */}
@@ -116,7 +116,7 @@ export default function Hero() {
       {/* Tên — char reveal */}
       <div className="mb-3 overflow-hidden">
         <h1
-          className="font-display font-black text-4xl md:text-7xl lg:text-8xl leading-none tracking-tight"
+          className="font-display font-black text-3xl sm:text-5xl md:text-7xl lg:text-8xl leading-none tracking-tight"
           aria-label={NAME}
         >
           {nameChars.map((char, i) => (
@@ -163,7 +163,7 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 2.2, duration: 1 }}
       >
-        &ldquo;Vạn lý tu tiên lộ, nhất bộ nhất cước ấn&rdquo;
+        &ldquo;We deserve great things. It&rsquo;s may come slowly, but it will definitely come.&rdquo; 🌷
       </motion.p>
 
       {/* Scroll indicator */}

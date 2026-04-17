@@ -9,12 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        jade: "#00C896",
+        "jade-light": "#7FFFD4",
+        "jade-dark": "#00897B",
+        crimson: "#C0392B",
+        "crimson-light": "#E74C3C",
         gold: "#D4AF37",
-        "gold-light": "#F0D060",
-        "gold-dark": "#A8860A",
-        "dark-bg": "#0A0A0F",
-        "dark-card": "#13131A",
-        "dark-border": "#1E1E2E",
+        ink: "#050810",
+        "ink-card": "#0A0F1A",
+        "ink-border": "#1A2035",
       },
       fontFamily: {
         display: ["var(--font-playfair)", "Georgia", "serif"],
@@ -24,18 +27,18 @@ const config: Config = {
         "spin-slow": "spin 8s linear infinite",
         "float": "float 6s ease-in-out infinite",
         "glow-pulse": "glowPulse 3s ease-in-out infinite",
-        "text-shimmer": "textShimmer 3s linear infinite",
+        "text-shimmer": "textShimmer 4s linear infinite",
         "bounce-slow": "bounceSlow 2s ease-in-out infinite",
-        "star-fall": "starFall linear infinite",
+        "flicker": "flicker 3s ease-in-out infinite",
       },
       keyframes: {
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-20px)" },
+          "50%": { transform: "translateY(-15px)" },
         },
         glowPulse: {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(212,175,55,0.3)" },
-          "50%": { boxShadow: "0 0 60px rgba(212,175,55,0.8)" },
+          "0%, 100%": { boxShadow: "0 0 20px rgba(0,200,150,0.3)" },
+          "50%": { boxShadow: "0 0 60px rgba(0,200,150,0.8)" },
         },
         textShimmer: {
           "0%": { backgroundPosition: "-200% center" },
@@ -45,13 +48,10 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(10px)" },
         },
-        starFall: {
-          "0%": { transform: "translateY(-100px) rotate(0deg)", opacity: "1" },
-          "100%": { transform: "translateY(100vh) rotate(720deg)", opacity: "0" },
+        flicker: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.7" },
         },
-      },
-      backdropBlur: {
-        xs: "2px",
       },
     },
   },
